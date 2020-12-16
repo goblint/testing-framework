@@ -11,40 +11,15 @@ SPDX-License-Identifier: Apache-2.0
 <!-- Example file for benchmark definition for BenchExec
      with dummy tool that simply returns random answers.
      No resource limits are specified. -->
-<benchmark tool="dummy" displayName="Tool with Random Results">
-
-  <!-- For dummy tool, we specify options that define the tool output. -->
-  <option>true</option>
-  <option>false(unreach-call)</option>
+<benchmark tool="goblint" displayName="Goblinit testruns">
 
   <!-- <rundefinition> defines a tool configuration to benchmark -->
   <rundefinition/>
 
   <!-- <tasks> defines a set of tasks:
        we define three sets of some arbitrary example files here. -->
-  <tasks name="DTD files">
-    <include>*.dtd</include>
+  <tasks name="regression base tests">
+    <include>"~/analyzer/goblint/tests/regression/02-base/03-pthread.join.c</include>
   </tasks>
 
-  <tasks name="Markdown files">
-    <include>*.md</include>
-  </tasks>
-
-  <tasks name="XML files">
-    <include>*.xml</include>
-  </tasks>
-
-  <!-- YAML files can be used as template files from which tasks
-       can be created. Each YAML file will produce one task. -->
-  <tasks name="Tasks from templates">
-    <include>*.yml</include>
-  </tasks>
-
-  <!-- <tasks> with <withoutfile> allows to define tasks without input files,
-       if the tool supports this. -->
-  <tasks name="Dummy tasks">
-    <withoutfile>dummy task 1</withoutfile>
-    <withoutfile>dummy task 2</withoutfile>
-    <withoutfile>dummy task 3</withoutfile>
-  </tasks>
 </benchmark>
