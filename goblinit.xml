@@ -1,25 +1,34 @@
 <?xml version="1.0"?>
 
-<!--
-This file is part of BenchExec, a framework for reliable benchmarking:
-https://github.com/sosy-lab/benchexec
-SPDX-FileCopyrightText: 2007-2020 Dirk Beyer <https://www.sosy-lab.org>
-SPDX-License-Identifier: Apache-2.0
--->
 
+
+<!--required for benchexec-->
 <!DOCTYPE benchmark PUBLIC "+//IDN sosy-lab.org//DTD BenchExec benchmark 2.3//EN" "https://www.sosy-lab.org/benchexec/benchmark-2.3.dtd">
-<!-- Example file for benchmark definition for BenchExec
-     with dummy tool that simply returns random answers.
-     No resource limits are specified. -->
+
+<!-- benchexec tool declaration-->
 <benchmark tool="goblint" displayName="Goblinit testruns">
 
-  <!-- <rundefinition> defines a tool configuration to benchmark -->
+  <!-- <rundefinition> defines a tool configuration to benchmark TODO in order to correctly asses test results -->
   <rundefinition/>
 
-  <!-- <tasks> defines a set of tasks:
-       we define three sets of some arbitrary example files here. -->
-  <tasks name="regression base tests">
-    <include>"~/analyzer/goblint/tests/regression/02-base/03-pthread.join.c</include>
-  </tasks>
+	  <!-- <tasks> defines a set of tasks:-->
+<tasks name="regression 00-sanity">
+	<include>tests/regression/00-sanity/01-assert.c</include>
+	<include>tests/regression/00-sanity/02-minimal.c</include>
+	<include>tests/regression/00-sanity/03-no_succ.c</include>
+</tasks>
+
+<tasks name="regression 01-cpa">
+	<include>tests/regression/01-cpa/01-expressions.c</include>
+	<include>tests/regression/01-cpa/02-branch.c</include>
+	<include>tests/regression/01-cpa/03-loops.c</include>
+
+</tasks>
+		 
+<tasks name="regression 02-base">
+	<include>tests/regression/02-base/01-thread_creation.c</include>
+	<include>tests/regression/02-base/02-simple_assignments.c</include>
+	<include>tests/regression/02-base/03-pthread_join.c</include>
+</tasks>
 
 </benchmark>
