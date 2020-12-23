@@ -32,11 +32,12 @@ class XMLGenerator:
              '<!-- benchexec tool declaration-->\n' \
              '<benchmark tool="goblint" displayName="Goblinit testruns">\n' \
              '\t<!-- <rundefinition> defines a tool configuration to benchmark TODO in order to correctly asses test results -->\n' \
-             '\t<rundefinition/>'
+             '\t<rundefinition/>\n'
     endmark = '</benchmark>'
 
-    def __init__(self):
+    #def __init__(self):
         #print(self.header)
+
 
     def generate_xml(self, directory):
         out = ''
@@ -161,7 +162,7 @@ class Goblinit:
                 self.start_benchmark()
 
             elif re_gen_xml.match(console_input):
-                self.xmlgenerator.generate_xml(self.xmlgenerator.test_directory)
+                print(self.xmlgenerator.generate_xml(self.xmlgenerator.test_directory))
 
             elif re_cancel_rec_timer.match(console_input):
                 cancel_event.set()
@@ -200,9 +201,9 @@ def stringdate_to_seconds(value):
 
 
 def stringtime_to_seconds(value):
-    # print(value)
+   # print(value)
     components = value.split(':')
-    # print(components)
+   # print(components)
     hours = int(components[0])
     if hours < 0:
         raise ValueError
@@ -216,7 +217,7 @@ def stringtime_to_seconds(value):
     return 360 * hours + 60 * minutes + seconds
 
 
-# Main Method
+# Main Method:
 def main():
     G = Goblinit()
 
