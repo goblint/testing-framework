@@ -36,7 +36,7 @@ class XMLGenerator:
     endmark = '</benchmark>'
 
     def __init__(self):
-        print(self.header)
+        #print(self.header)
 
     def generate_xml(self, directory):
         out = ''
@@ -77,14 +77,14 @@ class Recurring_Timer(threading.Thread):
 
     def run(self):
         while True:
-            print("runnin")
+            #print("runnin")
             time.sleep(self.intervall)
             if cancel_event.isSet():
-                print("stoppn")
+                #print("stoppn")
                 cancel_event.clear()
                 break
             else:
-                print("callin")
+                #print("callin")
                 self.func()
 
 
@@ -123,7 +123,7 @@ class Goblinit:
             if re_exit.match(console_input):
                 exit = True
             elif re_rc_timer.match(console_input):
-                print("blub")
+                #print("blub")
                 if self.recurring_Timer:
                     cancel_event.set()
                     self.recurring_Timer.join()
