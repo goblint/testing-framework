@@ -7,17 +7,23 @@ goblint_url="https://github.com/goblint/analyzer"
 #change accordingly to desired location
 goblint_path=${PWD}/analyzer
 goblinit_path=${PWD}
+sv_comp_url="https://github.com/sosy-lab/sv-benchmarks"
 
 #Functiondeclarations:
 
 #Function to Pull and setup goblint
+#need make and git
 goblint_init(){
 	git clone $goblint_url
 	cd $goblint_path
-	make setup
-	make
+	sudo make setup
+	sudo make
 	eval $(opam env)
 	cd $goblinit_path
+	sudo add-apt-repository ppa:sosy-lab/benchmarking
+	sudo apt install benchexec
+	git clone $sv_comp_url
+	
 }
 
 #Function to pull newest goblint at the variable of the goblint path
