@@ -211,7 +211,7 @@ class Goblinit:
             print("Benchmark started")
             self.repomanager.update_repository()
             result_folder = filename + str(int(time.time()))
-            subprocess.run("(cd analyzer/ ; sudo benchexec " + "../benchmarks/" + filename + "-o ../Testresults/ " + result_folder)
+            subprocess.run("(cd analyzer/ ; sudo benchexec --no-container" + "../benchmarks/" + filename + "-o ../Testresults/ " + result_folder)
             subprocess.run("sudo table-generator Testresults/resultfolder/*.results.xml.bz2")
             time.sleep(2)
             print("Benchmark finished")
