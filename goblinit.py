@@ -3,9 +3,38 @@ import subprocess
 import threading
 import time
 import re
+import socket
 import datetime
 
+# Default benchmark file if nor specified
 DEFAULT_XML_FILE = "goblinit.xml"
+# Address of the Goblinit server, (IP-ADDRESS, PORT)
+SERVER_ADDRESS = ('localhost', 59646)
+# Client identifier, used to identifiy different clients from each other by the server
+# Please set this for each different client manually
+IDENTIFIER = "Benchmarko"
+
+# regular expression declarations
+re_exit = re.compile('exit')
+re_rc_timer = re.compile('timer \d*')
+re_rc_timer_file = re.compile('timer \d* .+\.xml')
+re_number = re.compile('\d*')
+re_cancel_rec_timer = re.compile('cancel timer')
+re_schedule_date = re.compile('schedule ((\d\d\d\d.\d\d.\d\d) ([0-2]\d:[0-5]\d))')
+re_schedule_time = re.compile('schedule (\d*:[0-5]\d:[0-5]\d)')
+re_schedule_time_file = re.compile('schedule (\d*:[0-5]\d:[0-5]\d) .+\.xml')
+re_schedule_date_file = re.compile('schedule ((\d\d\d\d.\d\d.\d\d) ([0-2]\d:[0-5]\d)) .+\.xml')
+re_print_schedule = re.compile('schedule print')
+re_print_timer = re.compile('timer print')
+re_cancel_scheduled = re.compile('cancel \d*')
+re_clone = re.compile('clone')
+re_pull = re.compile('pull')
+re_test = re.compile('test')
+re_gen_xml = re.compile('generate')
+re_xml_file = re.compile(('.+\.xml'))
+re_start_bench = re.compile('startbenchmark .*\.xml')
+re_invalid_input = re.compile('Invalid Input')
+
 
 # Class to manage the download and update of the git repository
 class RepoManager:
@@ -13,17 +42,18 @@ class RepoManager:
     def __init__(self, cloneurl):
         self.url = cloneurl
 
-    # clones oor pulls newest version of th repo via the goblinit shell script
-    def update_repository(clone=False):
+    # clones or pulls newest version of th repo via the gitgoblin.sh script
+    def update_repository(self, clone=False):
         if clone:
             # clone the goblint repository
-            subprocess.run("./goblinit.sh -n")
+            subprocess.run("./gitgoblin.sh -n")
         else:
             # pull the newest version of goblint
-            subprocess.run("./goblinit.sh")
+            subprocess.run("./gitgoblin.sh")
 
 
 # Class that converts the tests filestructure into a benchexec readable xml file in order to ease future expansion
+# Use currently not recommended
 class XMLGenerator:
     # path to the testdirectory starting from the goblinit.py file TODO: possibility to give list of testing directories
     test_directory = "analyzer/tests"
@@ -66,207 +96,132 @@ class XMLGenerator:
             output = output + '">\n'
             for i in tests:
                 if re_test.fullmatch(i):
-                    output = output + '\t<include>' + path.replace('\\', '/') + '/' + i + '<\include>\n'
+                    output = output + '\t<include>' + path.replace('\\', '/') + '/' + i + '<\\include>\n'
             output = output + '<\\tasks>\n'
         return output
 
 
-# timer that restarts when it is done. ist it restarts based on when the last timer ended (-> when the benchmark
-# started) if the benchmark took longer than the timer, the next benchmark will start directly after it
+# class which is repsonible for the communication between the client and the server
+class Correspondent(threading.Thread):
+    def __init__(self, identity, goblinit):
+        super().__init__()
+        self.identity = identity  # client identifier
+        self.goblinit = goblinit  # goblinit main thread
+        self.exit = False  # exit flag
 
-class Recurring_Timer(threading.Thread):
-    def __init__(self, goblinit, interval, filename=DEFAULT_XML_FILE, oginterval=0):
-        self.cancel = threading.Event()
-        self.filename = filename
-        self.goblinit = goblinit
-        if oginterval == 0:
-            self.oginterval = interval
-            self.interval = interval
-        else:
-            self.interval = oginterval
-        super(Recurring_Timer, self).__init__()
+        # establishing connection to the server
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.connect(SERVER_ADDRESS)
+        # identification message
+        self.send("identity")
+        # print("pre listen")
 
-    def getCancel(self):
-        return self.cancel
-
-    def setCancel(self, lock):
-        if lock == True:
-            self.cancel.set()
-        elif lock == False:
-            self.cancel.clear()
-
+    # function which is executed when this thread is started
     def run(self):
-        runtime = 0
-        while True:
-            # print("runnin")
-            if (runtime < self.interval):
-                time.sleep(self.interval - runtime)
-            if self.cancel.isSet():
-                # print("stoppn")
-                break
-            else:
-                # print("callin")
-                startime = time.time()
-                self.goblinit.start_benchmark(self.filename)
-                endtime = time.time()
-                runtime = round(endtime - startime)
+        # loop to listen to the servers messages and handles them
+        while not self.exit:
+            try:
+                response = str(self.server.recv(4096), 'utf8')
+                if not response:
+                    break
+                else:
+                    # print("response: " + response)
+                    if re_exit.fullmatch(response):
+                        self.exit = True
+                    else:
+                        # in order to avoid infinte loop True is set to indicate message from server
+                        self.goblinit.handle(response, True)
+            except ConnectionResetError:
+                self.exit = True
+                self.goblinit.cexit = True
+
+    # sends the message to the server, always puts the identifier first in every message
+    def send(self, message):
+        try:
+            m = self.identity + " " + message
+            self.server.send((bytes(m, 'utf8')))
+        except ConnectionResetError:
+            self.exit = True
+            self.goblinit.cexit = True
 
 
 # Main Goblinit Class, that manages timer, bench execution and the repo manager
 class Goblinit:
-    scheduled_timers = []
-    recurring_Timer = None
     repomanager = None
     xmlgenerator = None
     busy = False
 
     def __init__(self):
-        self.repomanager = RepoManager("https://github.com/goblint/analyzer")
-        self.xmlgenerator = XMLGenerator()
+        self.repomanager = RepoManager("https://github.com/goblint/analyzer")  # responsible for pulling goblint
+        # self.xmlgenerator = XMLGenerator()                           # used to generate xml file, use not recommended
+        self.corresspondent = Correspondent(IDENTIFIER, self)  # used to communicate with the server
+        self.cexit = False
+
+        self.corresspondent.start()
         self.listen()
 
-    # listens on the console indefinetly until exit is called:
-    def listen(self):
-        exit = False
-        # regular expression declarations
-        re_exit = re.compile('exit')
-        re_rc_timer = re.compile('timer \d*')
-        re_rc_timer_file = re.compile('timer \d* .+\.xml')
-        re_number = re.compile('\d*')
-        re_cancel_rec_timer = re.compile('cancel timer')
-        re_schedule_date = re.compile('schedule ((\d\d\d\d.\d\d.\d\d) ([0-2]\d:[0-5]\d))')
-        re_schedule_time = re.compile('schedule (\d*:[0-5]\d:[0-5]\d)')
-        re_schedule_time_file = re.compile('schedule (\d*:[0-5]\d:[0-5]\d) .+\.xml')
-        re_schedule_date_file = re.compile('schedule ((\d\d\d\d.\d\d.\d\d) ([0-2]\d:[0-5]\d)) .+\.xml')
-        re_print_schedule = re.compile('schedule print')
-        re_cancel_scheduled = re.compile('cancel \d*')
-        re_clone = re.compile('clone')
-        re_pull = re.compile('pull')
-        re_test = re.compile('test')
-        re_gen_xml = re.compile('generate')
-        re_xml_file = re.compile(('.+\.xml'))
 
-        while not exit:
+    # function to listen to the console input
+    def listen(self):
+        # loop to listen for input
+        while not self.cexit:
             console_input = input()
             if re_exit.fullmatch(console_input):
-                exit = True
-            elif re_rc_timer.fullmatch(console_input):
-                # cancel old timer: old timer thread will run the sleep through, and end then,
-                # new timer starts running immediately
-                if self.recurring_Timer:
-                    self.recurring_Timer.getCancel().set()
-                # self.recurring_Timer.join()
-                intertime = int(re_number.match(console_input.split()[1]).group())
-                print(intertime)
-                self.recurring_Timer = Recurring_Timer(self, intertime)
-                self.recurring_Timer.start()
-
-            elif re_rc_timer_file.fullmatch(console_input):
-                file = re_xml_file.match(console_input.split()[2]).group()
-                #print("yo wanna open " + file)
-                intertime = int(re_number.match(console_input.split()[1]).group())
-                print(intertime)
-                self.recurring_Timer = Recurring_Timer(self, intertime, file)
-                self.recurring_Timer.start()
-
-            elif re_schedule_date.fullmatch(console_input):
-                components = console_input.split()
-                self.start_date_timer(stringdate_to_seconds(components[1] + ' ' + components[2]))
-
-            elif re_schedule_date_file.fullmatch(console_input):
-                components = console_input.split()
-                self.start_date_timer(stringdate_to_seconds(components[1] + ' ' + components[2]), components[3])
-
-            elif re_schedule_time.fullmatch(console_input):
-                components = console_input.split()
-                self.start_date_timer(stringtime_to_seconds(components[1]))
-
-            elif re_schedule_time_file.fullmatch(console_input):
-                components = console_input.split()
-                self.start_date_timer(stringtime_to_seconds(components[1]), components[3])
-
-            elif re_print_schedule.fullmatch(console_input):
-                print(self.scheduled_timers)
-
-            elif re_cancel_scheduled.fullmatch(console_input):
-                components = console_input.split()
-                pos = int(components[1])
-                if len(self.scheduled_timers) > pos:
-                    self.scheduled_timers[pos].cancel()
-                    self.scheduled_timers.pop(pos)
-                else:
-                    print("Invalid List Position")
-            elif re_pull.fullmatch(console_input):
-                self.repomanager.update_repository()
-
-            elif re_clone.fullmatch(console_input):
-                self.repomanager.update_repository(True)
-
-            elif re_test.fullmatch(console_input):
-                self.start_benchmark()
-
-            elif re_gen_xml.fullmatch(console_input):
-                print(self.xmlgenerator.generate_xml(self.xmlgenerator.test_directory))
-
-            elif re_cancel_rec_timer.fullmatch(console_input):
-                self.recurring_Timer.getCancel().set()
-                self.recurring_Timer = None
+                self.cexit = True
+                self.corresspondent.send(console_input)
             else:
-                print("Invalid Input, please try again!")
-        # exit protocol: stop all the timers
-        if self.recurring_Timer:
-            self.recurring_Timer.getCancel().set()
+                # handle the console input
+                self.handle(console_input)
 
-        for x in self.scheduled_timers:
-            x.cancel()
+    # function to match the input with its purpose via regex matching
+    def handle(self, console_input, from_server=False):
+        # print(console_input)
 
-    def start_date_timer(self, seconds, filename=DEFAULT_XML_FILE):
-        tim = threading.Timer(seconds, self.start_benchmark, [filename])
-        self.scheduled_timers.append(tim)
-        tim.start()
-        # print(self.scheduled_timers)
-        return
+        # pulls newest version of goblint, no need to send to server
+        if re_pull.fullmatch(console_input):
+            self.repomanager.update_repository()
 
+        # clones golbint repository again, should not be needed, as goblint is clones on installation
+        elif re_clone.fullmatch(console_input):
+            self.repomanager.update_repository(True)
+
+        # generates the xml output of the generator and prints it, use not recommended
+        elif re_gen_xml.fullmatch(console_input):
+            print(self.xmlgenerator.generate_xml(self.xmlgenerator.test_directory))
+
+        # starts the benchmark, should only come from server
+        elif re_start_bench.fullmatch(console_input):
+            if from_server:
+                self.start_benchmark(console_input.split()[1])
+            else:
+                print("Invalid Input, start benchmark through server")
+
+        elif re_invalid_input.fullmatch(console_input):
+            print("Invalid Input, please try again!")
+
+        else:
+            # if not from serverm send message to server for further processing
+            if not from_server:
+                self.corresspondent.send(console_input)
+
+    # function to start the benchamrking process and table generation
     def start_benchmark(self, filename=DEFAULT_XML_FILE):
         if not self.busy:
             self.busy = True
             print("Benchmark started")
-            # self.repomanager.update_repository()
+            self.repomanager.update_repository()
             result_folder = filename + str(int(time.time()))
-            #subprocess.run("(cd analyzer/ ; sudo benchexec " + "../benchmarks/" + filename + "-o ../Testresults/ " + result_folder)
-            #subprocess.run("sudo table-generator Testresults/resultfolder/*.results.xml.bz2
+            subprocess.run("(cd analyzer/ ; sudo benchexec " + "../benchmarks/" + filename + "-o ../Testresults/ " + result_folder)
+            subprocess.run("sudo table-generator Testresults/resultfolder/*.results.xml.bz2")
             time.sleep(2)
             print("Benchmark finished")
+            self.corresspondent.send("benchmark finished")
             self.busy = False
         else:
             print("Cant run Test, Goblinit is Currently Busy")
 
 
 # helper functions
-
-def stringdate_to_seconds(value):
-    date = value.split()[0].split('.')
-    clock = value.split()[1].split(':')
-    dt = datetime.datetime(int(date[0]), int(date[1]), int(date[2]), int(clock[0]), int(clock[1]), 0, 0)
-    diff = dt - datetime.datetime.now()
-    return diff.total_seconds()
-
-
-def stringtime_to_seconds(value):
-    # print(value)
-    components = value.split(':')
-    # print(components)
-    hours = int(components[0])
-    if hours < 0:
-        raise ValueError
-    minutes = int(components[1])
-    if not (0 <= minutes < 60):
-        raise ValueError
-    seconds = int(components[2])
-    if not (0 <= seconds < 60):
-        raise ValueError
-    # print(360 * hours + 60 * minutes * seconds)
-    return 360 * hours + 60 * minutes + seconds
 
 
 # Main Method:
