@@ -46,10 +46,10 @@ class RepoManager:
     def update_repository(self, clone=False):
         if clone:
             # clone the goblint repository
-            subprocess.run("./gitgoblin.sh -n")
+            subprocess.run("./gitgoblin.sh -n", shell=True)
         else:
             # pull the newest version of goblint
-            subprocess.run("./gitgoblin.sh")
+            subprocess.run("./gitgoblin.sh", shell=True)
 
 
 # Class that converts the tests filestructure into a benchexec readable xml file in order to ease future expansion
@@ -211,8 +211,8 @@ class Goblinit:
             print("Benchmark started")
             self.repomanager.update_repository()
             result_folder = filename + str(int(time.time()))
-            subprocess.run("(cd analyzer/ ; sudo benchexec --no-container" + "../benchmarks/" + filename + " -o ../Testresults/ " + result_folder)
-            subprocess.run("sudo table-generator Testresults/resultfolder/*.results.xml.bz2")
+            subprocess.run("(cd analyzer/ ; sudo benchexec --no-container" + "../benchmarks/" + filename + " -o ../Testresults/ " + result_folder+ ")", shell=True)
+            subprocess.run("sudo table-generator Testresults/"+ result_folder/ + "*.results.xml.bz2", shell=True)
             time.sleep(2)
             print("Benchmark finished")
             self.corresspondent.send("benchmark finished")
