@@ -18,7 +18,7 @@ echo finished Goblint
 eval $(opam env)
 #Step 2 installing benchexec
 echo installing benchexec
-sudo add-apt-repository ppa:soy-lab/benchmarking
+sudo add-apt-repository ppa:sosy-lab/benchmarking
 sudo apt install benchexec
 echo finished benchexec
 #step 3 cloning sv-comp tests
