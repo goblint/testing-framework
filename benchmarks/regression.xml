@@ -9,7 +9,7 @@
 <benchmark tool="goblint_regtests" displayName="Goblinit testruns">
 <!--benchmark tool="goblint_regtets" displayName="Goblinit testruns" timelimit="0" hardtimelimit="0" memlimit="0" cpuCores="0"-->
 
-	<rundefinition  name="Regression tests"><!-- defines a tool configuration to benchmark TODO in order to correctly asses test results -->
+	<rundefinition  name="regression-tests"><!-- defines a tool configuration to benchmark TODO in order to correctly asses test results -->
 	  <!-- <tasks> defines a set of tasks:-->
 	<tasks name="regression 00-sanity">
 		<include>../analyzer/tests/regression/00-sanity/*</include>		
