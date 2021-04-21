@@ -1,8 +1,10 @@
+***This is a CI / testing framework for Goblint originally developed by Andreas Ferrano for his Bachelor's thesis***
+
 # Goblinit
 
 Continiuous Testing integration for the Static Analyser Tool Goblint
 
-##{Installation}
+## Installation
 Before downloading Goblinit an up to date version of following programs need to be installed:
 * python3
 * make
