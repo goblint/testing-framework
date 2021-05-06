@@ -41,4 +41,6 @@ Once both the client and the server programs are started, the client will be abl
 	* The with NUMBER specified scheduled timer will be canceled. The number of a timer can be identified through its position in the list provided by schedule print. The index starts at 0.
 * pull
     * The client will pull the newest version of Goblint from the Goblint repository.
+* qs BENCHMARK
+    * The client will issue a benchmark request to the server, the server sets a recurring benchmark up, which starts in 5 seconds and repeats once per day at the time the first benchamr started
     
