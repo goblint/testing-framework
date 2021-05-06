@@ -10,10 +10,12 @@ sv_comp_url="https://github.com/sosy-lab/sv-benchmarks"
 #Step 1 installing Goblint:
 echo installing Goblint
 sudo apt install libgmp-dev
+sudo apt install curl
 git clone $goblint_url
 cd $goblint_path
 sudo make setup
 sudo make
+sudo make headers
 echo finished Goblint
 eval $(opam env)
 #Step 2 installing benchexec

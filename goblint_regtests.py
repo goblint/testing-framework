@@ -118,7 +118,7 @@ class Tool(benchexec.tools.template.BaseTool2):
         #print(returns)
         # stringify:
         returnstring = {"NO_TERM": returns[NO_TERM], "RACE": returns[RACE], "DEADLOCK": returns[DEADLOCK],
-                        "FAIL": returns[FAIL], "SUCCESS": returns[SUCCESS], "UNKNWON": 0, "UNKNWON!": 0,
+                        "FAIL": returns[FAIL], "SUCCESS": returns[SUCCESS],
                         "WARN": returns[WARN], "NO_WARN": returns[NO_WARN], "TOTAL": returns[TOTAL],
                         "UNKNOWN": returns[UNKNOWN], "UNKNOWN!": returns[UNKNOWN_EX]}
 
