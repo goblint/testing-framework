@@ -200,7 +200,7 @@ class Goblinit:
             print("Invalid Input, please try again!")
 
         else:
-            # if not from serverm send message to server for further processing
+            # if not from server send message to server for further processing
             if not from_server:
                 self.corresspondent.send(console_input)
 
@@ -213,7 +213,6 @@ class Goblinit:
             result_folder = filename + str(int(time.time())) + "/"
             subprocess.run("(cd analyzer/ ; sudo benchexec --no-container" + "../benchmarks/" + filename + " -o ../Testresults/ " + result_folder+ ")", shell=True)
             subprocess.run("sudo table-generator Testresults/"+ result_folder/ + "*.results.*.xml.bz2", shell=True)
-            time.sleep(2)
             print("Benchmark finished")
             self.corresspondent.send("benchmark finished")
             self.busy = False

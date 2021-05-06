@@ -102,7 +102,6 @@ class Tool(benchexec.tools.template.BaseTool2):
                 elif l == k and not v == b:
                     # check for unknown_ex and unknown
                     if b == UNKNOWN:
-                        print("bu")
                         if not v == UNKNOWN and not v == UNKNOWN_EX:
                             returns[b] += 1
                             returns[TOTAL] += 1
@@ -116,7 +115,7 @@ class Tool(benchexec.tools.template.BaseTool2):
                         returns[b] += 1
                         returns[TOTAL] += 1
 
-        print(returns)
+        #print(returns)
         # stringify:
         returnstring = {"NO_TERM": returns[NO_TERM], "RACE": returns[RACE], "DEADLOCK": returns[DEADLOCK],
                         "FAIL": returns[FAIL], "SUCCESS": returns[SUCCESS], "UNKNWON": 0, "UNKNWON!": 0,

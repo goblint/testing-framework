@@ -12,164 +12,164 @@
 	<rundefinition  name="regression-tests"><!-- defines a tool configuration to benchmark TODO in order to correctly asses test results -->
 	  <!-- <tasks> defines a set of tasks:-->
 	<tasks name="regression 00-sanity">
-		<include>../analyzer/tests/regression/00-sanity/*</include>		
+		<include>../analyzer/tests/regression/00-sanity/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 
 
 	<tasks name="regression 01-cpa">
-		<include>../analyzer/tests/regression/01-cpa/*</include>
+		<include>../analyzer/tests/regression/01-cpa/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 		 
 	<tasks name="regression 02-base">
-		<include>../analyzer/tests/regression/02-base/*</include>
+		<include>../analyzer/tests/regression/02-base/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 03-practical">
-		<include>../analyzer/tests/regression/03-practical/*</include>
+		<include>../analyzer/tests/regression/03-practical/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 04-mutex">
-		<include>../analyzer/tests/regression/04-mutex/*</include>
+		<include>../analyzer/tests/regression/04-mutex/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 05-lval_ls">
-		<include>../analyzer/tests/regression/05-lval_ls/*</include>
+		<include>../analyzer/tests/regression/05-lval_ls/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 06-symbeq">
-		<include>../analyzer/tests/regression/06-symbeq/*</include>
+		<include>../analyzer/tests/regression/06-symbeq/*.c</include>
 		<propertyfile> regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 07-uninit">
-		<include>../analyzer/tests/regression/07-uninit/*</include>
+		<include>../analyzer/tests/regression/07-uninit/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 08-malloc_null">
-		<include>../analyzer/tests/regression/08-malloc_null/*</include>
+		<include>../analyzer/tests/regression/08-malloc_null/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 09-regions">
-		<include>../analyzer/tests/regression/09-regions/*</include>
+		<include>../analyzer/tests/regression/09-regions/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 10-synch">
-		<include>../analyzer/tests/regression/10-synch/*</include>
+		<include>../analyzer/tests/regression/10-synch/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 11-heap">
-		<include>../analyzer/tests/regression/11-heap/*</include>
+		<include>../analyzer/tests/regression/11-heap/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 12-containment">
-		<include>../analyzer/tests/regression/12-containment/*</include>
+		<include>../analyzer/tests/regression/12-containment/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 13-privatized">
-		<include>../analyzer/tests/regression/13-privatized/*</include>
+		<include>../analyzer/tests/regression/13-privatized/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 14-osek">
-		<include>../analyzer/tests/regression/14-osek/*</include>
+		<include>../analyzer/tests/regression/14-osek/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 15-deadlock">
-		<include>../analyzer/tests/regression/15-deadlock/*</include>
+		<include>../analyzer/tests/regression/15-deadlock/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 16-relinv">
-		<include>../analyzer/tests/regression/16-relinv/*</include>
+		<include>../analyzer/tests/regression/16-relinv/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 17-arinc">
-		<include>../analyzer/tests/regression/17-arinc/*</include>
+		<include>../analyzer/tests/regression/17-arinc/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 18-file">
-		<include>../analyzer/tests/regression/18-file/*</include>
+		<include>../analyzer/tests/regression/18-file/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 19-spec">
-		<include>../analyzer/tests/regression/19-spec/*</include>
+		<include>../analyzer/tests/regression/19-spec/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 20-slr_term">
-		<include>../analyzer/tests/regression/20-slr_term/*</include>
+		<include>../analyzer/tests/regression/20-slr_term/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 21-casts">
-		<include>../analyzer/tests/regression/21-casts/*</include>
+		<include>../analyzer/tests/regression/21-casts/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 22-partitioned_arrays">
-		<include>../analyzer/tests/regression/22-partitioned_arrays/*</include>
+		<include>../analyzer/tests/regression/22-partitioned_arrays/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 23-partitioned_arrays_last">
-		<include>../analyzer/tests/regression/23-partitioned_arrays_last/*</include>
+		<include>../analyzer/tests/regression/23-partitioned_arrays_last/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 24-octagon">
-		<include>../analyzer/tests/regression/24-octagon/*</include>
+		<include>../analyzer/tests/regression/24-octagon/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 25-vla">
-		<include>../analyzer/tests/regression/25-vla/*</include>
+		<include>../analyzer/tests/regression/25-vla/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 26-undefined_behavior">
-		<include>../analyzer/tests/regression/26-undefined_behavior/*</include>
+		<include>../analyzer/tests/regression/26-undefined_behavior/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 27-inv_invariants">
-		<include>../analyzer/tests/regression/27-inv_invariants/*</include>
+		<include>../analyzer/tests/regression/27-inv_invariants/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	
 	<tasks name="regression 28-race_reach">
-		<include>../analyzer/tests/regression/28-race_reach/*</include>
+		<include>../analyzer/tests/regression/28-race_reach/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 29-svcomp">
-		<include>../analyzer/tests/regression/29-svcomp/*</include>
+		<include>../analyzer/tests/regression/29-svcomp/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 30-fast_global_inits">
-		<include>../analyzer/tests/regression/30-fast_global_inits/*</include>
+		<include>../analyzer/tests/regression/30-fast_global_inits/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	
 	<tasks name="regression 31-ikind-aware-ints">
-		<include>../analyzer/tests/regression/31-ikind-aware-ints/*</include>
+		<include>../analyzer/tests/regression/31-ikind-aware-ints/*.c</include>
 		<propertyfile>regtest.prp</propertyfile>
 	</tasks>
 	</rundefinition>

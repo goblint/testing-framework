@@ -44,6 +44,7 @@ re_start = re.compile('\S+ start .+\.xml')
 re_ident = re.compile(r'\S+ identity')
 re_save = re.compile('\S+ save')
 re_benchmark_finished = re.compile('\S+ benchmark finished')
+re_quickstart = re.compile('\S+ qs .+\.xml')
 
 
 # Client class, contains all information of a client, including the scheduled benchmarks and the socket and address.
@@ -339,6 +340,7 @@ class GoblinitThread(threading.Thread):
             self.set_exit(True)
         # immediately queues up the specified benchmark
         elif re_start.fullmatch(message):
+            print(message)
             client = message.split()[0]
             c = self.find_client(client)
             if c:
@@ -355,6 +357,10 @@ class GoblinitThread(threading.Thread):
             else:
                 raise Exception
             client.release_benchmark()
+        # starts the given benchmark in 5 seconds and repeats once per day
+        elif re_quickstart.fullmatch(message):
+            components = message.split()
+            self.start_rec_timer(components[0], 5, 86400, components[2])
         # starts a recurring timer based on the specified date and time of day
         elif re_rc_timer_date_file.fullmatch(message):
             components = message.split()
