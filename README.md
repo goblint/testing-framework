@@ -1,4 +1,5 @@
-***This is a CI / testing framework for Goblint originally developed by Andreas Ferrano for his Bachelor's thesis***
+***This is a CI / testing framework for Goblint originally developed by Andreas Ferrano for his Bachelor's thesis.***
+***The Goblint project is currently not using this framework.***
 
 # Goblinit
 
